@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TheInfinity.App/TheInfinity.App.csproj" />
+    <Project Path="src/TheInfinity.Core/TheInfinity.Core.csproj" />
+    <Project Path="src/TheInfinity.Persistence/TheInfinity.Persistence.csproj" />
+    <Project Path="src/TheInfinity.Win32/TheInfinity.Win32.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TheInfinity.Core.Tests/TheInfinity.Core.Tests.csproj" />
+    <Project Path="tests/TheInfinity.Win32.Tests/TheInfinity.Win32.Tests.csproj" />
+  </Folder>
+</Solution>

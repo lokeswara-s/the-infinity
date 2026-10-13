@@ -1,0 +1,101 @@
+<Window x:Class="TheInfinity.App.Views.OverviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="The Infinity Overview"
+        Icon="/Assets/app.ico"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="#101218"
+        ShowInTaskbar="False"
+        ShowActivated="True"
+        Topmost="True"
+        WindowStartupLocation="Manual">
+    <!-- Root is laid out in physical pixels (1 unit = 1 px) so canvas math matches work mode
+         and DWM thumbnail rectangles. A LayoutTransform maps it back onto the window's DPI. -->
+    <Grid x:Name="Root" HorizontalAlignment="Left" VerticalAlignment="Top" Background="Transparent"
+          TextElement.FontSize="13"
+          MouseLeftButtonDown="BackgroundDown" MouseMove="BackgroundMove" MouseLeftButtonUp="BackgroundUp" MouseWheel="BackgroundWheel">
+        <!-- The user's own wallpaper, dimmed, so zooming out feels like pulling back from the desktop. -->
+        <Image x:Name="Wallpaper" Stretch="UniformToFill" IsHitTestVisible="False"/>
+        <Rectangle Fill="#9908090D" IsHitTestVisible="False"/>
+        <Canvas x:Name="Guides" IsHitTestVisible="False"/>
+        <ItemsControl ItemsSource="{Binding Windows}" Panel.ZIndex="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><Canvas/></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding ViewLeft}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding ViewTop}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!-- The tile is exactly the window's rectangle so the DWM thumbnail keeps its aspect ratio.
+                         The label sits above it so the thumbnail never covers it. -->
+                    <Grid Width="{Binding ViewWidth}" Height="{Binding ViewHeight}" Background="Transparent"
+                          Opacity="{Binding IsDimmed, Converter={StaticResource DimOpacity}}"
+                          MouseLeftButtonDown="WindowDown" ToolTip="{Binding Title}">
+                        <Grid.ContextMenu>
+                            <ContextMenu Opened="WindowMenuOpened">
+                                <MenuItem Header="Zoom in and focus" Click="MenuActivate"/>
+                                <MenuItem Header="Frame on canvas" Click="MenuFrame"/>
+                                <Separator/>
+                                <MenuItem Header="Minimize" Click="MenuMinimize"/>
+                                <MenuItem Header="Maximize" Click="MenuMaximize"/>
+                                <MenuItem Header="Restore" Click="MenuRestore"/>
+                                <MenuItem Header="Close" Click="MenuClose"/>
+                                <Separator/>
+                                <MenuItem Header="Pin to screen" Click="MenuPin"/>
+                                <MenuItem Header="Forget this window" Click="MenuForget" Tag="forget"/>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+                        <Border Background="#1A2030" CornerRadius="4" BorderThickness="2">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="#334055"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BorderBrush" Value="#7C9CFF"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsPlaceholder}" Value="True">
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Opacity" Value="0.7"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <!-- Still from just before the window was minimized (slightly dimmed to read as "not live"). -->
+                                <Image Source="{Binding Snapshot}" Stretch="Uniform" Opacity="0.85"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Visibility="{Binding ShowSnapshot, Converter={StaticResource BoolVis}}"/>
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                            Visibility="{Binding ShowIcon, Converter={StaticResource BoolVis}}">
+                                    <Image Source="{Binding Icon}" Width="32" Height="32" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ProcessName}" Foreground="#93A0B5" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+                                    <TextBlock Text="Not running" Foreground="#E3B341" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"
+                                               Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolVis}}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <!-- Dashed gold outline = a remembered window whose app is not running right now. -->
+                        <Rectangle RadiusX="4" RadiusY="4" Stroke="#E3B341" StrokeThickness="1.5" StrokeDashArray="4 3" IsHitTestVisible="False"
+                                   Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolVis}}"/>
+                        <Border Height="24" VerticalAlignment="Top" Margin="0,-26,0,0" Background="Transparent">
+                            <DockPanel>
+                                <Image Source="{Binding Icon}" Width="16" Height="16" Margin="2,0,6,0"/>
+                                <TextBlock DockPanel.Dock="Right" Text="not running" Foreground="#E3B341" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"
+                                           Visibility="{Binding IsPlaceholder, Converter={StaticResource BoolVis}}"/>
+                                <TextBlock Text="{Binding Title}" Foreground="#E8EEF7" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Canvas x:Name="MarqueeHost" Panel.ZIndex="3" IsHitTestVisible="False">
+            <Rectangle x:Name="Marquee" Visibility="Collapsed" Fill="#337C9CFF" Stroke="#7C9CFF" StrokeThickness="1"/>
+        </Canvas>
+    </Grid>
+</Window>
