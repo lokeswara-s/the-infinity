@@ -9,7 +9,7 @@ The Infinity turns your Windows desktop into one big canvas. Zoom out and every 
 I wanted something like [Deskspace](https://github.com/djekanovic/Deskspace) that I could read, change and build myself. It is a native Windows app: C#, WPF, and the Win32 and Desktop Window Manager APIs. No Electron, no web view, and nothing is injected into other programs.
 
 <p align="center">
-  <video src="docs/videos/preview.mp4" controls width="100%"></video>
+  <img src="docs/gifs/preview.gif" alt="Preview" width="100%">
 </p>
 
 <p align="center">
