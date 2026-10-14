@@ -9,6 +9,10 @@ The Infinity turns your Windows desktop into one big canvas. Zoom out and every 
 I wanted something like [Deskspace](https://github.com/djekanovic/Deskspace) that I could read, change and build myself. It is a native Windows app: C#, WPF, and the Win32 and Desktop Window Manager APIs. No Electron, no web view, and nothing is injected into other programs.
 
 <p align="center">
+  <video src="docs/videos/preview.mp4" controls width="100%"></video>
+</p>
+
+<p align="center">
   <img src="docs/screenshots/commandbar.png" alt="The command bar" width="720">
 </p>
 
@@ -32,7 +36,7 @@ There are no releases yet. CI builds a self-contained zip on every push; look fo
 
 ### Build from source
 
-You need Windows 10 (1809) or Windows 11 on x64, and the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Check with `dotnet --version`. The Windows SDK is only needed if you also want the MSIX package.
+You need Windows 10 (1809) or Windows 11 on x64, and the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). Check with `dotnet --version`.
 
 ```powershell
 git clone https://github.com/<your-account>/the-infinity.git
@@ -48,13 +52,17 @@ The Win32 tests open a few small windows for a second. Set `INFINITY_SKIP_DESKTO
 ### Install it like a normal app
 
 ```powershell
-.\installer\publish.ps1    # self-contained build in dist\win-x64, plus dist\TheInfinity.msix if makeappx is found
-.\installer\Install.ps1    # copies it to %LocalAppData%\TheInfinity\app and adds a Start Menu shortcut
+.\installer\publish.ps1
 ```
 
-`Install.ps1 -FromBuild` installs a plain Release build instead. The MSIX is not signed, so installing it needs your own certificate or Developer Mode. "Start with Windows" is a setting in the app. It writes to the current user's Run key, so no service and no elevation.
+That writes two things into `dist`:
 
-To uninstall, delete `%LocalAppData%\TheInfinity` and the Start Menu shortcut.
+- `TheInfinity-1.0.0.msi` installs for the current user only. Double-click it. It does not ask for administrator rights. The app goes to `%LocalAppData%\TheInfinity\app` and a Start menu shortcut is added. Windows will say the publisher is unknown because the package is not signed; choose "More info", then "Run anyway".
+- `TheInfinity-1.0.0-win-x64.zip` is the same build as a folder, if you would rather not use an installer.
+
+`Install.ps1` copies a build into the same folder without an MSI. `Install.ps1 -FromBuild` uses a plain Release build instead of the published one. "Start with Windows" is a setting in the app. It writes to the current user's Run key, so no service and no elevation.
+
+Uninstall from Windows Settings, Apps. That removes the shortcut. Your workspace database in `%LocalAppData%\TheInfinity` is left in place.
 
 ## Controls
 
@@ -94,8 +102,7 @@ src/
 tests/
   TheInfinity.Core.Tests/    pure logic and the SQLite store
   TheInfinity.Win32.Tests/   real windows: move, minimize, snapshots, DWM thumbnails
-installer/                   publish.ps1 and Install.ps1
-packaging/                   MSIX manifest and logos
+installer/                   publish.ps1, the per-user MSI, and Install.ps1
 docs/                        screenshots and the manual test checklist
 ```
 

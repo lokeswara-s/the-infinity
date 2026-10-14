@@ -1,0 +1,10 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <OutputName>TheInfinity-1.0.0</OutputName>
+    <OutputPath>..\dist\</OutputPath>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <!-- ICE38 and ICE64 complain that per-user files use a file as their key path. That is valid for an install into LocalAppData. -->
+    <SuppressIces>ICE38;ICE60;ICE64;ICE91</SuppressIces>
+  </PropertyGroup>
+</Project>

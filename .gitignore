@@ -4,5 +4,4 @@ obj/
 *.user
 TestResults/
 dist/
-*.msix
 .render/
